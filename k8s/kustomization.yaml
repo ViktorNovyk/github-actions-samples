@@ -8,4 +8,4 @@ namespace: hello-gitops
 images:
 - name: hello-gitops
   newName: intatl/hello-gitops
-  newTag: ff30b38e1583d21a3b9cd3df8d574d986ecc4c64
+  newTag: 9c571eb0cd9d070fb59d9cac88002330fa796d2c
