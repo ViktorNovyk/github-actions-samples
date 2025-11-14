@@ -19,10 +19,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Set up Python 3.10
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: "3.10"
         
@@ -48,23 +48,23 @@ jobs:
       
     - name: Set up Docker Buildx
       id: buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
       
     - name: Cache Docker layers
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /tmp/.buildx-cache
         key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
     
-    - uses: docker/login-action@v2 
+    - uses: docker/login-action@v3 
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
       
     - name: Build and push
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: ./app 
         file: ./app/Dockerfile
@@ -82,12 +82,12 @@ jobs:
     
     env:
       PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-      GKE_CLUSTER: autopilot-cluster-1    # TODO: update to cluster name
-      GKE_REGION: us-central1	   # TODO: update to cluster region
+      GKE_CLUSTER: autopilot-cluster-2
+      GKE_REGION: europe-west1
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Setup Kustomize
       uses: imranismail/setup-kustomize@v1
@@ -96,12 +96,12 @@ jobs:
 
     # Alternative option - authentication via credentials json
     - name: Authenticate to Google Cloud
-      uses: 'google-github-actions/auth@v0'
+      uses: 'google-github-actions/auth@v2'
       with:
-        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
     - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v0
+      uses: google-github-actions/setup-gcloud@v2
 
     - name: Get the GKE credentials so we can deploy to the cluster
       run: |
@@ -163,6 +163,6 @@ jobs:
         git commit -am "Bump docker tag"
         
     - name: Push changes
-      uses: ad-m/github-push-action@master
+      uses: ad-m/github-push-action@v0.8.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }} 
